@@ -6,11 +6,11 @@ namespace App\Controller\Rest;
 
 use App\Controller\Rest\Traits\ErrorResponseTrait;
 use App\Controller\Rest\Traits\HateoasResponseTrait;
-use App\Dto\Request\ArticleCreateRequest;
-use App\Dto\Request\ArticleUpdateRequest;
-use App\Entity\Article;
-use App\Repository\ArticleRepositoryInterface;
-use App\Service\ArticleService;
+use App\Dto\Request\CatalogCreateRequest;
+use App\Dto\Request\CatalogUpdateRequest;
+use App\Entity\Catalog;
+use App\Repository\CatalogRepositoryInterface;
+use App\Service\CatalogService;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -23,26 +23,26 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
- * @OA\Tag(name="Articles")
+ * @OA\Tag(name="Catalogs")
  */
-class ApiArticleController extends AbstractFOSRestController
+class ApiCatalogController extends AbstractFOSRestController
 {
     use ErrorResponseTrait;
     use HateoasResponseTrait;
 
     public function __construct(
-        private ArticleRepositoryInterface $articleRepository,
-        private ArticleService $articleService,
+        private CatalogRepositoryInterface $catalogRepository,
+        private CatalogService $catalogService,
     ) {
     }
 
     /**
-     * @Rest\Get("/v1/articles", name="api_get_articles")
+     * @Rest\Get("/v1/catalogs", name="api_get_catalogs")
      *
      * @OA\Parameter(
      *     in="query",
      *     name="page",
-     *     description="Page from which to start listing articles.",
+     *     description="Page from which to start listing catalogs.",
      *     required=true,
      *     @OA\Schema(type="integer", default="1")
      * )
@@ -75,9 +75,9 @@ class ApiArticleController extends AbstractFOSRestController
      *         @OA\Items(
      *             type="string",
      *             enum={
-     *                 "article",
-     *                 "article.catalogs",
-     *                 "catalogs"
+     *                 "catalog",
+     *                 "catalog.articles",
+     *                 "articles"
      *             }
      *         )
      *     )
@@ -88,22 +88,22 @@ class ApiArticleController extends AbstractFOSRestController
      *     @OA\Schema(
      *         type="array",
      *         @OA\Items(
-     *             ref=@Model(type=Article::class, groups={"article"})
+     *             ref=@Model(type=Catalog::class, groups={"catalog"})
      *         )
      *     )
      * )
      */
     public function index(Request $request): Response
     {
-        return $this->handleCollectionRequest($this->articleRepository, $request, [
+        return $this->handleCollectionRequest($this->catalogRepository, $request, [
             'serializerGroups' => [
-                'article',
+                'catalog',
             ],
         ]);
     }
 
     /**
-     * @Rest\Get("/v1/articles/{id}", name="api_get_article")
+     * @Rest\Get("/v1/catalogs/{id}", name="api_get_catalog")
      *
      * @OA\Parameter(
      *     in="query",
@@ -116,9 +116,9 @@ class ApiArticleController extends AbstractFOSRestController
      *         @OA\Items(
      *             type="string",
      *             enum={
-     *                 "article",
-     *                 "article.catalogs",
-     *                 "catalogs"
+     *                 "catalog",
+     *                 "catalog.articles",
+     *                 "articles"
      *             }
      *         )
      *     )
@@ -129,31 +129,31 @@ class ApiArticleController extends AbstractFOSRestController
      *     @OA\Schema(
      *         type="object",
      *         ref=@Model(
-     *             type=Article::class,
-     *             groups={"article"}
+     *             type=Catalog::class,
+     *             groups={"catalog"}
      *         )
      *     )
      * )
      */
-    public function detail(Request $request, Article $article): Response
+    public function detail(Request $request, Catalog $catalog): Response
     {
         $params = (new OptionsResolver())
             ->setDefaults([
                 'serializerGroups' => [
-                    'article',
+                    'catalog',
                 ],
             ])
             ->resolve($request->query->all());
 
-        return $this->serializeResponse($article, $params['serializerGroups']);
+        return $this->serializeResponse($catalog, $params['serializerGroups']);
     }
 
     /**
-     * @Rest\Post("/v1/articles", name="api_post_article")
-     * @ParamConverter("articleCreateRequest", converter="fos_rest.request_body")
+     * @Rest\Post("/v1/catalogs", name="api_post_catalog")
+     * @ParamConverter("catalogCreateRequest", converter="fos_rest.request_body")
      *
      * @OA\RequestBody(
-     *     @Model(type=ArticleCreateRequest::class),
+     *     @Model(type=CatalogCreateRequest::class),
      * ),
      * @OA\Parameter(
      *     in="query",
@@ -166,9 +166,9 @@ class ApiArticleController extends AbstractFOSRestController
      *         @OA\Items(
      *             type="string",
      *             enum={
-     *                 "article",
-     *                 "article.catalogs",
-     *                 "catalogs"
+     *                 "catalog",
+     *                 "catalog.articles",
+     *                 "articles"
      *             }
      *         )
      *     )
@@ -179,8 +179,8 @@ class ApiArticleController extends AbstractFOSRestController
      *     @OA\Schema(
      *         type="object",
      *         ref=@Model(
-     *             type=Article::class,
-     *             groups={"article"}
+     *             type=Catalog::class,
+     *             groups={"catalog"}
      *         )
      *     )
      * )
@@ -188,7 +188,7 @@ class ApiArticleController extends AbstractFOSRestController
      * @throws \Exception
      */
     public function create(
-        ArticleCreateRequest $articleCreateRequest,
+        CatalogCreateRequest $catalogCreateRequest,
         Request $request,
         ConstraintViolationListInterface $validationErrors
     ): Response {
@@ -201,22 +201,22 @@ class ApiArticleController extends AbstractFOSRestController
         $params = (new OptionsResolver())
             ->setDefaults([
                 'serializerGroups' => [
-                    'article',
+                    'catalog',
                 ],
             ])
             ->resolve($request->query->all());
 
-        $article = $this->articleService->store($articleCreateRequest);
+        $catalog = $this->catalogService->store($catalogCreateRequest);
 
-        return $this->serializeResponse($article, $params['serializerGroups']);
+        return $this->serializeResponse($catalog, $params['serializerGroups']);
     }
 
     /**
-     * @Rest\Put("/v1/articles/{id}", name="api_put_article")
-     * @ParamConverter("articleUpdateRequest", converter="fos_rest.request_body")
+     * @Rest\Put("/v1/catalogs/{id}", name="api_put_catalog")
+     * @ParamConverter("catalogUpdateRequest", converter="fos_rest.request_body")
      *
      * @OA\RequestBody(
-     *     @Model(type=ArticleUpdateRequest::class),
+     *     @Model(type=CatalogUpdateRequest::class),
      * ),
      * @OA\Parameter(
      *     in="query",
@@ -229,9 +229,9 @@ class ApiArticleController extends AbstractFOSRestController
      *         @OA\Items(
      *             type="string",
      *             enum={
-     *                 "article",
-     *                 "article.catalogs",
-     *                 "catalogs"
+     *                 "catalog",
+     *                 "catalog.articles",
+     *                 "articles"
      *             }
      *         )
      *     )
@@ -242,8 +242,8 @@ class ApiArticleController extends AbstractFOSRestController
      *     @OA\Schema(
      *         type="object",
      *         ref=@Model(
-     *             type=Article::class,
-     *             groups={"article"}
+     *             type=Catalog::class,
+     *             groups={"catalog"}
      *         )
      *     )
      * )
@@ -251,8 +251,8 @@ class ApiArticleController extends AbstractFOSRestController
      * @throws \Exception
      */
     public function update(
-        ArticleUpdateRequest $articleUpdateRequest,
-        Article $article,
+        CatalogUpdateRequest $catalogUpdateRequest,
+        Catalog $catalog,
         Request $request,
         ConstraintViolationListInterface $validationErrors
     ): Response {
@@ -265,18 +265,18 @@ class ApiArticleController extends AbstractFOSRestController
         $params = (new OptionsResolver())
             ->setDefaults([
                 'serializerGroups' => [
-                    'article',
+                    'catalog',
                 ],
             ])
             ->resolve($request->query->all());
 
-        $article = $this->articleService->update($articleUpdateRequest, $article);
+        $catalog = $this->catalogService->update($catalogUpdateRequest, $catalog);
 
-        return $this->serializeResponse($article, $params['serializerGroups']);
+        return $this->serializeResponse($catalog, $params['serializerGroups']);
     }
 
     /**
-     * @Rest\Post("/v1/articles/{id}/image", name="api_post_article_image")
+     * @Rest\Post("/v1/catalogs/{id}/image", name="api_post_catalog_image")
      *
      * @OA\RequestBody(
      *     required=true,
@@ -294,7 +294,7 @@ class ApiArticleController extends AbstractFOSRestController
      *     )
      * ),
      * @OA\Parameter(
-     *     description="ID of article to update",
+     *     description="ID of catalog to update",
      *     in="path",
      *     name="id",
      *     required=true,
@@ -310,31 +310,31 @@ class ApiArticleController extends AbstractFOSRestController
      *     @OA\Schema(
      *         type="object",
      *         ref=@Model(
-     *             type=Article::class,
-     *             groups={"article"}
+     *             type=Catalog::class,
+     *             groups={"catalog"}
      *         )
      *     )
      * )
      */
-    public function saveImage(Request $request, Article $article): Response
+    public function saveImage(Request $request, Catalog $catalog): Response
     {
         $image = $request->files->get('cover');
 
         $params = (new OptionsResolver())
             ->setDefaults([
                 'serializerGroups' => [
-                    'article',
+                    'catalog',
                 ],
             ])
             ->resolve($request->query->all());
 
-        $article = $this->articleService->saveImage($article, $image);
+        $catalog = $this->catalogService->saveImage($catalog, $image);
 
-        return $this->serializeResponse($article, $params['serializerGroups']);
+        return $this->serializeResponse($catalog, $params['serializerGroups']);
     }
 
     /**
-     * @Rest\Delete("/v1/articles/{id}", name="api_delete_article")
+     * @Rest\Delete("/v1/catalogs/{id}", name="api_delete_catalog")
      *
      * @OA\Parameter(
      *     in="query",
@@ -347,9 +347,9 @@ class ApiArticleController extends AbstractFOSRestController
      *         @OA\Items(
      *             type="string",
      *             enum={
-     *                 "article",
-     *                 "article.catalogs",
-     *                 "catalogs"
+     *                 "catalog",
+     *                 "catalog.articles",
+     *                 "articles"
      *             }
      *         )
      *     )
@@ -361,9 +361,9 @@ class ApiArticleController extends AbstractFOSRestController
      *
      * @throws \Exception
      */
-    public function delete(Article $article): JsonResponse
+    public function delete(Catalog $catalog): JsonResponse
     {
-        $status = $this->articleService->delete($article);
+        $status = $this->catalogService->delete($catalog);
 
         return new JsonResponse(['success' => $status]);
     }

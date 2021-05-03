@@ -61,8 +61,13 @@ To run tests, run the following command
   POST /api/v1/articles
 ```
 
-TODO - to be continue
-
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `name`      | `string` | **Required**. Name of article |
+| `description`      | `string` | Description of article |
+| `pound_value`      | `int` | **Required if `shilling_value` and `pence_value` equal to 0**. Price in pound |
+| `shilling_value`      | `int` | **Required if `pound_value` and `pence_value` equal to 0**. Price in shilling |
+| `pence_value`      | `int` | **Required if `pound_value` and `shilling_value`  equal to 0**. Price in pence |
 
 ## Authors
 
