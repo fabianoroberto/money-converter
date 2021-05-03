@@ -1,19 +1,57 @@
 {
+    "name": "fabianoroberto/money-converter",
+    "description": "Money converter",
     "type": "project",
     "license": "proprietary",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
+    "authors": [
+        {
+            "name": "Fabiano Roberto",
+            "email": "fabiano.roberto@ped.technology",
+            "role": "Senior Back-end Developer"
+        }
+    ],
     "require": {
-        "php": ">=7.2.5",
+        "php": ">=8.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-intl": "*",
+        "composer/package-versions-deprecated": "1.11.99.1",
+        "doctrine/doctrine-bundle": "^2.3",
+        "doctrine/doctrine-migrations-bundle": "^3.1",
+        "doctrine/orm": "^2.8",
+        "friendsofsymfony/rest-bundle": "^3.0",
+        "jms/serializer-bundle": "^3.9",
+        "league/flysystem-bundle": "^2.0",
+        "nelmio/api-doc-bundle": "^4.2",
+        "pagerfanta/pagerfanta": "^3.0",
+        "sensio/framework-extra-bundle": "^6.1",
+        "stof/doctrine-extensions-bundle": "^1.6",
+        "symfony/asset": "5.2.*",
         "symfony/console": "5.2.*",
         "symfony/dotenv": "5.2.*",
         "symfony/flex": "^1.3.1",
         "symfony/framework-bundle": "5.2.*",
-        "symfony/yaml": "5.2.*"
+        "symfony/proxy-manager-bridge": "5.2.*",
+        "symfony/twig-bundle": "5.2.*",
+        "symfony/uid": "5.2.*",
+        "symfony/validator": "5.2.*",
+        "symfony/webpack-encore-bundle": "^1.11",
+        "symfony/yaml": "5.2.*",
+        "twig/extra-bundle": "^2.12|^3.0",
+        "twig/twig": "^2.12|^3.0",
+        "webmozart/assert": "^1.10",
+        "willdurand/hateoas-bundle": "^2.2"
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "fakerphp/faker": "^1.14",
+        "friendsofphp/php-cs-fixer": "^2.18",
+        "phpspec/phpspec": "^7.0",
+        "symfony/debug-bundle": "^5.2",
+        "symfony/maker-bundle": "^1.30",
+        "symfony/stopwatch": "^5.2",
+        "symfony/var-dumper": "^5.2",
+        "symfony/web-profiler-bundle": "^5.2"
     },
     "config": {
         "optimize-autoloader": true,
@@ -29,7 +67,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "App\\Tests\\": "tests/",
+            "spec\\App\\": "spec/"
         }
     },
     "replace": {
@@ -47,6 +86,22 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "fix": [
+            "symfony php vendor/bin/php-cs-fixer fix --verbose"
+        ],
+        "fix-dry-run": [
+            "symfony php vendor/bin/php-cs-fixer fix --diff --dry-run -v"
+        ],
+        "lint-yaml": [
+            "symfony console lint:yaml config --parse-tags"
+        ],
+        "lint-twig": [
+            "symfony console lint:twig templates",
+            "symfony console lint:twig src"
+        ],
+        "schema-validate": [
+            "symfony console doctrine:schema:validate --skip-sync -vvv --no-interaction"
         ]
     },
     "conflict": {
@@ -54,8 +109,10 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": false,
+            "allow-contrib": true,
             "require": "5.2.*"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
