@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Entity\Conversion;
 use App\Entity\Currency;
-use App\Entity\GbpPrice;
 use App\Entity\Price;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -38,7 +38,7 @@ class ConversionFixtures extends Fixture implements DependentFixtureInterface
             $destinationCurrency = $this->getReference($destinationCode);
             $destinationPrice = new Price((float) $destinationValue, $destinationCurrency);
 
-            $conversion = new GbpPrice($sourcePrice, $destinationPrice);
+            $conversion = new Conversion($sourcePrice, $destinationPrice);
             $manager->persist($conversion);
         }
 

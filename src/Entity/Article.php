@@ -154,9 +154,16 @@ class Article implements SoftDeleteable, Timestampable
         return $this->price;
     }
 
-    public function setPrice(?GbpPrice $price): void
+    public function setPrice(?GbpPrice $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getCode(): string
+    {
+        return $this->code;
     }
 
     private function generateCode(): void
@@ -164,7 +171,7 @@ class Article implements SoftDeleteable, Timestampable
         $this->code = \sprintf(
             'A%d%s',
             \date('y'),
-            \mb_substr(\str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 7)
+            \mb_substr(\str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 7)
         );
     }
 }

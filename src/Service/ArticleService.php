@@ -29,11 +29,11 @@ class ArticleService
     }
 
     /**
-     * @param mixed $toBase64
+     * @param bool|mixed $toBase64
      *
      * @throws FilesystemException
      */
-    public function getCover(Article $article, $toBase64 = false): string
+    public function getPhoto(Article $article, bool $toBase64 = false): string
     {
         $content = $this->storage->read($article->getPhotoFilename());
 

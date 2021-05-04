@@ -276,64 +276,6 @@ class ApiCatalogController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Post("/v1/catalogs/{id}/image", name="api_post_catalog_image")
-     *
-     * @OA\RequestBody(
-     *     required=true,
-     *     @OA\MediaType(
-     *         mediaType="multipart/form-data",
-     *         @OA\Schema(
-     *             @OA\Property(
-     *                 description="File to upload",
-     *                 property="cover",
-     *                 type="string",
-     *                 format="file",
-     *             ),
-     *             required={"file"}
-     *         )
-     *     )
-     * ),
-     * @OA\Parameter(
-     *     description="ID of catalog to update",
-     *     in="path",
-     *     name="id",
-     *     required=true,
-     *     @OA\Schema(
-     *         type="string",
-     *         format="uuid"
-     *     ),
-     * )
-     *
-     * @OA\Response(
-     *     response=Response::HTTP_OK,
-     *     description="Success",
-     *     @OA\Schema(
-     *         type="object",
-     *         ref=@Model(
-     *             type=Catalog::class,
-     *             groups={"catalog"}
-     *         )
-     *     )
-     * )
-     */
-    public function saveImage(Request $request, Catalog $catalog): Response
-    {
-        $image = $request->files->get('cover');
-
-        $params = (new OptionsResolver())
-            ->setDefaults([
-                'serializerGroups' => [
-                    'catalog',
-                ],
-            ])
-            ->resolve($request->query->all());
-
-        $catalog = $this->catalogService->saveImage($catalog, $image);
-
-        return $this->serializeResponse($catalog, $params['serializerGroups']);
-    }
-
-    /**
      * @Rest\Delete("/v1/catalogs/{id}", name="api_delete_catalog")
      *
      * @OA\Parameter(

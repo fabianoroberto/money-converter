@@ -62,6 +62,11 @@ class Catalog
         return $this->id;
     }
 
+    public function getUuid(): string
+    {
+        return $this->id->__toString();
+    }
+
     public function getName(): ?string
     {
         return $this->name;

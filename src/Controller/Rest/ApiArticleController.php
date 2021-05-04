@@ -75,6 +75,7 @@ class ApiArticleController extends AbstractFOSRestController
      *         @OA\Items(
      *             type="string",
      *             enum={
+     *                 "articles",
      *                 "article",
      *                 "article.catalogs",
      *                 "catalogs"
@@ -88,7 +89,7 @@ class ApiArticleController extends AbstractFOSRestController
      *     @OA\Schema(
      *         type="array",
      *         @OA\Items(
-     *             ref=@Model(type=Article::class, groups={"article"})
+     *             ref=@Model(type=Article::class, groups={"articles"})
      *         )
      *     )
      * )
@@ -103,7 +104,7 @@ class ApiArticleController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Get("/v1/articles/{id}", name="api_get_article")
+     * @Rest\Get("/v1/articles/{code}", name="api_get_article")
      *
      * @OA\Parameter(
      *     in="query",
