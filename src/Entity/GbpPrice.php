@@ -30,13 +30,40 @@ class GbpPrice
      */
     private ?int $penceValue = 0;
 
+    private ?int $remainderValue = 0;
+
     public function __construct(int $poundValue, int $shillingValue, int $penceValue)
     {
-        $this->reduce($poundValue, $shillingValue, $penceValue);
+        $this->reduceAndAssign($poundValue, $shillingValue, $penceValue);
     }
 
     public function __toString(): string
     {
+        if ($this->remainderValue > 0) {
+            [$remainderPound, $remainderShilling, $reminderPence] = $this->reduce(0, 0, $this->remainderValue);
+
+            if ($remainderPound > 0) {
+                return \sprintf(
+                    '%dp %ds %dd (%dp %ds %dd)',
+                    $this->poundValue,
+                    $this->shillingValue,
+                    $this->penceValue,
+                    $remainderPound,
+                    $remainderShilling,
+                    $reminderPence
+                );
+            }
+
+            return \sprintf(
+                '%dp %ds %dd (%ds %dd)',
+                $this->poundValue,
+                $this->shillingValue,
+                $this->penceValue,
+                $remainderShilling,
+                $reminderPence
+            );
+        }
+
         return \sprintf('%dp %ds %dd', $this->poundValue, $this->shillingValue, $this->penceValue);
     }
 
@@ -72,7 +99,7 @@ class GbpPrice
         $divisor = $this->convertToPence($poundValue, $shillingValue, $penceValue);
 
         Assert::greaterThanEq($dividend, $divisor, 'Dividend cannot less than divisor');
-        $this->convertFromPence((int) $dividend / $divisor);
+        $this->convertFromPence(\intdiv($dividend, $divisor), $dividend % $divisor);
     }
 
     public function getPoundValue(): ?int
@@ -90,18 +117,30 @@ class GbpPrice
         return $this->penceValue;
     }
 
-    private function reduce(int $poundValue, int $shillingValue, int $penceValue)
+    private function reduceAndAssign(int $poundValue, int $shillingValue, int $penceValue): void
     {
-        $penceQuotient = (int) ($penceValue / self::PENCE_TO_SHILLING);
-        $this->penceValue = $penceValue % self::PENCE_TO_SHILLING;
-        $shillingQuotient = (int) (($shillingValue + $penceQuotient) / self::SHILLING_TO_POUND);
-        $this->shillingValue = ($shillingValue + $penceQuotient) % self::SHILLING_TO_POUND;
-        $this->poundValue = $poundValue + $shillingQuotient;
+        [$poundValue, $shillingValue, $penceValue] = $this->reduce($poundValue, $shillingValue, $penceValue);
+
+        $this->penceValue = $penceValue;
+        $this->shillingValue = $shillingValue;
+        $this->poundValue = $poundValue;
     }
 
-    private function convertFromPence(int $value): void
+    private function reduce(int $poundValue, int $shillingValue, int $penceValue): array
     {
-        $this->reduce(0, 0, $value);
+        $penceQuotient = (int) ($penceValue / self::PENCE_TO_SHILLING);
+        $newPenceValue = $penceValue % self::PENCE_TO_SHILLING;
+        $shillingQuotient = (int) (($shillingValue + $penceQuotient) / self::SHILLING_TO_POUND);
+        $newShillingValue = ($shillingValue + $penceQuotient) % self::SHILLING_TO_POUND;
+        $newPoundValue = $poundValue + $shillingQuotient;
+
+        return [$newPoundValue, $newShillingValue, $newPenceValue];
+    }
+
+    private function convertFromPence(int $value, int $remainderValue = 0): void
+    {
+        $this->reduceAndAssign(0, 0, $value);
+        $this->remainderValue = $remainderValue;
     }
 
     private function convertToPence(int $poundValue, int $shillingValue, int $penceValue): int

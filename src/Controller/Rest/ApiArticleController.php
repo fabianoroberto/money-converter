@@ -37,7 +37,7 @@ class ApiArticleController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Get("/v1/articles", name="api_get_articles")
+     * @Rest\Get("/api/v1/articles", name="api_get_articles")
      *
      * @OA\Parameter(
      *     in="query",
@@ -104,7 +104,7 @@ class ApiArticleController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Get("/v1/articles/{code}", name="api_get_article")
+     * @Rest\Get("/api/v1/articles/{code}", name="api_get_article")
      *
      * @OA\Parameter(
      *     in="query",
@@ -150,7 +150,7 @@ class ApiArticleController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Post("/v1/articles", name="api_post_article")
+     * @Rest\Post("/api/v1/articles", name="api_post_article")
      * @ParamConverter("articleCreateRequest", converter="fos_rest.request_body")
      *
      * @OA\RequestBody(
@@ -213,7 +213,7 @@ class ApiArticleController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Put("/v1/articles/{id}", name="api_put_article")
+     * @Rest\Put("/api/v1/articles/{id}", name="api_put_article")
      * @ParamConverter("articleUpdateRequest", converter="fos_rest.request_body")
      *
      * @OA\RequestBody(
@@ -277,7 +277,7 @@ class ApiArticleController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Post("/v1/articles/{id}/image", name="api_post_article_image")
+     * @Rest\Post("/api/v1/articles/{id}/image", name="api_post_article_image")
      *
      * @OA\RequestBody(
      *     required=true,
@@ -335,7 +335,7 @@ class ApiArticleController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Delete("/v1/articles/{id}", name="api_delete_article")
+     * @Rest\Delete("/api/v1/articles/{id}", name="api_delete_article")
      *
      * @OA\Parameter(
      *     in="query",

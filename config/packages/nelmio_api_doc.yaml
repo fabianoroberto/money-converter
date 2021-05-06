@@ -17,4 +17,4 @@ nelmio_api_doc:
             - Bearer: [ ]
     areas: # to filter documented areas
         path_patterns:
-            - ^/v1(?!/doc|/doc\.json$) # Accepts routes under /api except /api/doc
+            - ^/api/v1(?!/doc|/doc\.json$) # Accepts routes under /api except /api/doc
