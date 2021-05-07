@@ -9,11 +9,11 @@ use JMS\Serializer\Annotation as JMS;
 use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class MathSumRequest
+final class MathMulRequest
 {
     /**
      * @JMS\Type("string")
-     * @Assert\NotNull(message="First addend is required.")
+     * @Assert\NotNull(message="First factor is required.")
      * @Assert\NotBlank
      * @Assert\Regex(
      *     pattern="/^\d+p \d+s \d+d$/",
@@ -25,11 +25,11 @@ final class MathSumRequest
      *     example="5p 17s 8d"
      * )
      */
-    private string $addend1;
+    private string $factor1;
 
     /**
      * @JMS\Type("string")
-     * @Assert\NotNull(message="Second addend is required.")
+     * @Assert\NotNull(message="Second factor is required.")
      * @Assert\NotBlank
      * @Assert\Regex(
      *     pattern="/^\d+p \d+s \d+d|\d+$/",
@@ -38,14 +38,14 @@ final class MathSumRequest
      * @OA\Property(
      *     type="string",
      *     pattern="^\d+p \d+s \d+d|\d+$",
-     *     example="3p 4s 10d"
+     *     example="2"
      * )
      */
-    private string $addend2;
+    private string $factor2;
 
     public function getPrice1(): GbpPrice
     {
-        $parts = explode(' ', $this->addend1);
+        $parts = explode(' ', $this->factor1);
 
         $poundValue = 0;
         $shillingValue = 0;
@@ -65,7 +65,7 @@ final class MathSumRequest
 
     public function getPrice2(): GbpPrice
     {
-        $parts = explode(' ', $this->addend2);
+        $parts = explode(' ', $this->factor2);
 
         $poundValue = 0;
         $shillingValue = 0;
@@ -86,8 +86,8 @@ final class MathSumRequest
     public function toArray(): array
     {
         return [
-            'addend1' => $this->addend1,
-            'addend2' => $this->addend2,
+            'factor1' => $this->factor1,
+            'factor2' => $this->factor2,
         ];
     }
 }

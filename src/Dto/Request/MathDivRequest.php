@@ -9,11 +9,11 @@ use JMS\Serializer\Annotation as JMS;
 use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class MathSumRequest
+final class MathDivRequest
 {
     /**
      * @JMS\Type("string")
-     * @Assert\NotNull(message="First addend is required.")
+     * @Assert\NotNull(message="Dividend is required.")
      * @Assert\NotBlank
      * @Assert\Regex(
      *     pattern="/^\d+p \d+s \d+d$/",
@@ -22,14 +22,14 @@ final class MathSumRequest
      * @OA\Property(
      *     type="string",
      *     pattern="^\d+p \d+s \d+d$",
-     *     example="5p 17s 8d"
+     *     example="18p 16s 1d"
      * )
      */
-    private string $addend1;
+    private string $dividend;
 
     /**
      * @JMS\Type("string")
-     * @Assert\NotNull(message="Second addend is required.")
+     * @Assert\NotNull(message="Divisor is required.")
      * @Assert\NotBlank
      * @Assert\Regex(
      *     pattern="/^\d+p \d+s \d+d|\d+$/",
@@ -38,14 +38,14 @@ final class MathSumRequest
      * @OA\Property(
      *     type="string",
      *     pattern="^\d+p \d+s \d+d|\d+$",
-     *     example="3p 4s 10d"
+     *     example="15"
      * )
      */
-    private string $addend2;
+    private string $divisor;
 
     public function getPrice1(): GbpPrice
     {
-        $parts = explode(' ', $this->addend1);
+        $parts = explode(' ', $this->dividend);
 
         $poundValue = 0;
         $shillingValue = 0;
@@ -65,7 +65,7 @@ final class MathSumRequest
 
     public function getPrice2(): GbpPrice
     {
-        $parts = explode(' ', $this->addend2);
+        $parts = explode(' ', $this->divisor);
 
         $poundValue = 0;
         $shillingValue = 0;
@@ -86,8 +86,8 @@ final class MathSumRequest
     public function toArray(): array
     {
         return [
-            'addend1' => $this->addend1,
-            'addend2' => $this->addend2,
+            'dividend' => $this->dividend,
+            'divisor' => $this->divisor,
         ];
     }
 }

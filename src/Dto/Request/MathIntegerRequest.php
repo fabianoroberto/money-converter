@@ -6,14 +6,21 @@ namespace App\Dto\Request;
 
 use App\Entity\GbpPrice;
 use JMS\Serializer\Annotation as JMS;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class MathBaseRequest
+class MathIntegerRequest
 {
     /**
      * @JMS\Type("integer")
      * @Assert\NotNull(message="Pound price is required.")
      * @Assert\NotBlank
+     * @OA\Schema(
+     *     type="integer",
+     *     minimum=0,
+     *     default="0",
+     *     example="1"
+     * )
      */
     private int $poundValue1 = 0;
 
@@ -21,6 +28,12 @@ class MathBaseRequest
      * @JMS\Type("integer")
      * @Assert\NotNull(message="Shilling price is required.")
      * @Assert\NotBlank
+     * @OA\Schema(
+     *     type="integer",
+     *     minimum=0,
+     *     default="0",
+     *     example="19"
+     * )
      */
     private int $shillingValue1 = 0;
 
@@ -28,6 +41,12 @@ class MathBaseRequest
      * @JMS\Type("integer")
      * @Assert\NotNull(message="Pence price is required.")
      * @Assert\NotBlank
+     * @OA\Schema(
+     *     type="integer",
+     *     minimum=0,
+     *     default="0",
+     *     example="21"
+     * )
      */
     private int $penceValue1 = 0;
 
@@ -35,6 +54,12 @@ class MathBaseRequest
      * @JMS\Type("integer")
      * @Assert\NotNull(message="Pound price is required.")
      * @Assert\NotBlank
+     * @OA\Schema(
+     *     type="integer",
+     *     minimum=0,
+     *     default="0",
+     *     example="0"
+     * )
      */
     private int $poundValue2 = 0;
 
@@ -42,6 +67,12 @@ class MathBaseRequest
      * @JMS\Type("integer")
      * @Assert\NotNull(message="Shilling price is required.")
      * @Assert\NotBlank
+     * @OA\Schema(
+     *     type="integer",
+     *     minimum=0,
+     *     default="0",
+     *     example="1"
+     * )
      */
     private int $shillingValue2 = 0;
 
@@ -49,6 +80,12 @@ class MathBaseRequest
      * @JMS\Type("integer")
      * @Assert\NotNull(message="Pence price is required.")
      * @Assert\NotBlank
+     * @OA\Schema(
+     *     type="integer",
+     *     minimum=0,
+     *     default="0",
+     *     example="9"
+     * )
      */
     private int $penceValue2 = 0;
 
