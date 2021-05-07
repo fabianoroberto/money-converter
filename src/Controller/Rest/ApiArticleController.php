@@ -6,7 +6,9 @@ namespace App\Controller\Rest;
 
 use App\Controller\Rest\Traits\ErrorResponseTrait;
 use App\Controller\Rest\Traits\HateoasResponseTrait;
+use App\Dto\Request\ArticleAddToCatalogRequest;
 use App\Dto\Request\ArticleCreateRequest;
+use App\Dto\Request\ArticleRemoveFromCatalogRequest;
 use App\Dto\Request\ArticleUpdateRequest;
 use App\Entity\Article;
 use App\Repository\ArticleRepositoryInterface;
@@ -151,7 +153,7 @@ class ApiArticleController extends AbstractFOSRestController
 
     /**
      * @Rest\Post("/api/v1/articles", name="api_post_article")
-     * @ParamConverter("articleCreateRequest", converter="fos_rest.request_body")
+     * @ParamConverter("createRequest", converter="fos_rest.request_body")
      *
      * @OA\RequestBody(
      *     @Model(type=ArticleCreateRequest::class),
@@ -189,7 +191,7 @@ class ApiArticleController extends AbstractFOSRestController
      * @throws \Exception
      */
     public function create(
-        ArticleCreateRequest $articleCreateRequest,
+        ArticleCreateRequest $createRequest,
         Request $request,
         ConstraintViolationListInterface $validationErrors
     ): Response {
@@ -207,14 +209,14 @@ class ApiArticleController extends AbstractFOSRestController
             ])
             ->resolve($request->query->all());
 
-        $article = $this->articleService->store($articleCreateRequest);
+        $article = $this->articleService->store($createRequest);
 
         return $this->serializeResponse($article, $params['serializerGroups']);
     }
 
     /**
-     * @Rest\Put("/api/v1/articles/{id}", name="api_put_article")
-     * @ParamConverter("articleUpdateRequest", converter="fos_rest.request_body")
+     * @Rest\Put("/api/v1/articles/{code}", name="api_put_article")
+     * @ParamConverter("updateRequest", converter="fos_rest.request_body")
      *
      * @OA\RequestBody(
      *     @Model(type=ArticleUpdateRequest::class),
@@ -252,7 +254,7 @@ class ApiArticleController extends AbstractFOSRestController
      * @throws \Exception
      */
     public function update(
-        ArticleUpdateRequest $articleUpdateRequest,
+        ArticleUpdateRequest $updateRequest,
         Article $article,
         Request $request,
         ConstraintViolationListInterface $validationErrors
@@ -271,13 +273,77 @@ class ApiArticleController extends AbstractFOSRestController
             ])
             ->resolve($request->query->all());
 
-        $article = $this->articleService->update($articleUpdateRequest, $article);
+        $article = $this->articleService->update($updateRequest, $article);
 
         return $this->serializeResponse($article, $params['serializerGroups']);
     }
 
     /**
-     * @Rest\Post("/api/v1/articles/{id}/image", name="api_post_article_image")
+     * @Rest\Put("/api/v1/articles/{code}/catalogs", name="api_put_article_catalog")
+     * @ParamConverter("addToCatalogRequest", converter="fos_rest.request_body")
+     *
+     * @OA\RequestBody(
+     *     @Model(type=ArticleAddToCatalogRequest::class),
+     * ),
+     * @OA\Parameter(
+     *     in="query",
+     *     name="serializerGroups[]",
+     *     description="Custom serializer groups array",
+     *     required=false,
+     *     style="form",
+     *     @OA\Schema(
+     *         type="array",
+     *         @OA\Items(
+     *             type="string",
+     *             enum={
+     *                 "article",
+     *                 "article.catalogs",
+     *                 "catalogs"
+     *             }
+     *         )
+     *     )
+     * )
+     * @OA\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Success",
+     *     @OA\Schema(
+     *         type="object",
+     *         ref=@Model(
+     *             type=Article::class,
+     *             groups={"article"}
+     *         )
+     *     )
+     * )
+     *
+     * @throws \Exception
+     */
+    public function addToCatalogs(
+        ArticleAddToCatalogRequest $addToCatalogRequest,
+        Article $article,
+        Request $request,
+        ConstraintViolationListInterface $validationErrors
+    ): Response {
+        if (\count($validationErrors) > 0) {
+            $view = $this->constraintViolationView($validationErrors);
+
+            return $this->handleView($view);
+        }
+
+        $params = (new OptionsResolver())
+            ->setDefaults([
+                'serializerGroups' => [
+                    'article',
+                ],
+            ])
+            ->resolve($request->query->all());
+
+        $article = $this->articleService->addToCatalogs($addToCatalogRequest, $article);
+
+        return $this->serializeResponse($article, $params['serializerGroups']);
+    }
+
+    /**
+     * @Rest\Post("/api/v1/articles/{code}/image", name="api_post_article_image")
      *
      * @OA\RequestBody(
      *     required=true,
@@ -286,7 +352,7 @@ class ApiArticleController extends AbstractFOSRestController
      *         @OA\Schema(
      *             @OA\Property(
      *                 description="File to upload",
-     *                 property="cover",
+     *                 property="photo",
      *                 type="string",
      *                 format="file",
      *             ),
@@ -295,13 +361,12 @@ class ApiArticleController extends AbstractFOSRestController
      *     )
      * ),
      * @OA\Parameter(
-     *     description="ID of article to update",
+     *     description="Code of article to update",
      *     in="path",
-     *     name="id",
+     *     name="code",
      *     required=true,
      *     @OA\Schema(
      *         type="string",
-     *         format="uuid"
      *     ),
      * )
      *
@@ -319,7 +384,7 @@ class ApiArticleController extends AbstractFOSRestController
      */
     public function saveImage(Request $request, Article $article): Response
     {
-        $image = $request->files->get('cover');
+        $image = $request->files->get('photo');
 
         $params = (new OptionsResolver())
             ->setDefaults([
@@ -335,7 +400,7 @@ class ApiArticleController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Delete("/api/v1/articles/{id}", name="api_delete_article")
+     * @Rest\Delete("/api/v1/articles/{code}", name="api_delete_article")
      *
      * @OA\Parameter(
      *     in="query",
@@ -367,5 +432,69 @@ class ApiArticleController extends AbstractFOSRestController
         $status = $this->articleService->delete($article);
 
         return new JsonResponse(['success' => $status]);
+    }
+
+    /**
+     * @Rest\Delete("/api/v1/articles/{code}/catalogs", name="api_delete_article_catalog")
+     * @ParamConverter("removeFromCatalogRequest", converter="fos_rest.request_body")
+     *
+     * @OA\RequestBody(
+     *     @Model(type=ArticleRemoveFromCatalogRequest::class),
+     * ),
+     * @OA\Parameter(
+     *     in="query",
+     *     name="serializerGroups[]",
+     *     description="Custom serializer groups array",
+     *     required=false,
+     *     style="form",
+     *     @OA\Schema(
+     *         type="array",
+     *         @OA\Items(
+     *             type="string",
+     *             enum={
+     *                 "article",
+     *                 "article.catalogs",
+     *                 "catalogs"
+     *             }
+     *         )
+     *     )
+     * )
+     * @OA\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Success",
+     *     @OA\Schema(
+     *         type="object",
+     *         ref=@Model(
+     *             type=Article::class,
+     *             groups={"article"}
+     *         )
+     *     )
+     * )
+     *
+     * @throws \Exception
+     */
+    public function removeFromCatalogs(
+        ArticleRemoveFromCatalogRequest $removeFromCatalogRequest,
+        Article $article,
+        Request $request,
+        ConstraintViolationListInterface $validationErrors
+    ): Response {
+        if (\count($validationErrors) > 0) {
+            $view = $this->constraintViolationView($validationErrors);
+
+            return $this->handleView($view);
+        }
+
+        $params = (new OptionsResolver())
+            ->setDefaults([
+                'serializerGroups' => [
+                    'article',
+                ],
+            ])
+            ->resolve($request->query->all());
+
+        $article = $this->articleService->removeFromCatalogs($removeFromCatalogRequest, $article);
+
+        return $this->serializeResponse($article, $params['serializerGroups']);
     }
 }

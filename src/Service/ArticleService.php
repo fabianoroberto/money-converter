@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\Request\ArticleAddToCatalogRequest;
 use App\Dto\Request\ArticleCreateRequest;
+use App\Dto\Request\ArticleRemoveFromCatalogRequest;
 use App\Dto\Request\ArticleUpdateRequest;
 use App\Entity\Article;
-use App\Entity\GbpPrice;
+use App\Entity\Catalog;
 use App\Repository\ArticleRepositoryInterface;
+use App\Repository\CatalogRepositoryInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use League\Flysystem\FilesystemException;
@@ -22,6 +25,7 @@ class ArticleService
 
     public function __construct(
         private ArticleRepositoryInterface $articleRepository,
+        private CatalogRepositoryInterface $catalogRepository,
         private LoggerInterface $logger,
         FilesystemOperator $articlesStorage,
     ) {
@@ -54,14 +58,22 @@ class ArticleService
     {
         $this->logger->info('Create article');
 
-        $price = new GbpPrice(
-            $articleCreateRequest->getPoundValue(),
-            $articleCreateRequest->getShillingValue(),
-            $articleCreateRequest->getPenceValue()
-        );
-
-        $article = (new Article($articleCreateRequest->getName(), $price))
+        $article = (new Article($articleCreateRequest->getName(), $articleCreateRequest->getPrice()))
             ->setDescription($articleCreateRequest->getDescription());
+
+        if ($image = $articleCreateRequest->getPhoto()) {
+            $this->writeImage($article, $image);
+        }
+
+        $catalogSlugs = $articleCreateRequest->getCatalogs();
+
+        if ($catalogSlugs) {
+            foreach ($catalogSlugs as $slug) {
+                /** @var Catalog $catalog */
+                $catalog = $this->catalogRepository->findOneBy(['slug' => $slug]);
+                $article->addCatalog($catalog);
+            }
+        }
 
         $this->articleRepository->store($article);
 
@@ -72,19 +84,32 @@ class ArticleService
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    public function update(ArticleUpdateRequest $articleUpdateRequest, Article $article): Article
+    public function update(ArticleUpdateRequest $updateRequest, Article $article): Article
     {
         $this->logger->info('Save article');
 
-        $price = new GbpPrice(
-            $articleUpdateRequest->getPoundValue(),
-            $articleUpdateRequest->getShillingValue(),
-            $articleUpdateRequest->getPenceValue()
-        );
+        $article->setName($updateRequest->getName())
+            ->setDescription($updateRequest->getDescription())
+            ->setPrice($updateRequest->getPrice());
 
-        $article->setName($articleUpdateRequest->getName())
-            ->setDescription($articleUpdateRequest->getDescription())
-            ->setPrice($price);
+        $this->articleRepository->store($article);
+
+        return $article;
+    }
+
+    public function addToCatalogs(ArticleAddToCatalogRequest $addToCatalogRequest, Article $article): Article
+    {
+        $this->logger->info('Add article into catalogs');
+
+        $catalogSlugs = $addToCatalogRequest->getCatalogs();
+
+        if ($catalogSlugs) {
+            foreach ($catalogSlugs as $slug) {
+                /** @var Catalog $catalog */
+                $catalog = $this->catalogRepository->findOneBy(['slug' => $slug]);
+                $article->addCatalog($catalog);
+            }
+        }
 
         $this->articleRepository->store($article);
 
@@ -98,15 +123,7 @@ class ArticleService
      */
     public function saveImage(Article $article, UploadedFile $image): Article
     {
-        $imageName = \sprintf('%s.%s', $article->getUuid(), $image->guessExtension());
-
-        $this->storage->write(
-            $imageName,
-            $image->getContent()
-        );
-
-        $article->setPhotoFilename($imageName);
-
+        $this->writeImage($article, $image);
         $this->articleRepository->store($article);
 
         return $article;
@@ -131,5 +148,38 @@ class ArticleService
 
             return false;
         }
+    }
+
+    public function removeFromCatalogs(
+        ArticleRemoveFromCatalogRequest $removeFromCatalogRequest,
+        Article $article
+    ): Article {
+        $this->logger->info('Add article into catalogs');
+
+        $catalogSlugs = $removeFromCatalogRequest->getCatalogs();
+
+        if ($catalogSlugs) {
+            foreach ($catalogSlugs as $slug) {
+                /** @var Catalog $catalog */
+                $catalog = $this->catalogRepository->findOneBy(['slug' => $slug]);
+                $article->removeCatalog($catalog);
+            }
+        }
+
+        $this->articleRepository->store($article);
+
+        return $article;
+    }
+
+    private function writeImage(Article $article, UploadedFile $image): void
+    {
+        $imageName = \sprintf('%s.%s', $article->getUuid(), $image->guessExtension());
+
+        $this->storage->write(
+            $imageName,
+            $image->getContent()
+        );
+
+        $article->setPhotoFilename($imageName);
     }
 }

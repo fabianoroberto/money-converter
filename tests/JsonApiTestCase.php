@@ -7,10 +7,14 @@ namespace App\Tests;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class JsonApiTestCase extends WebTestCase
 {
-    protected KernelBrowser|null $client = null;
-    protected string|null $token = null;
+    protected KernelBrowser | null $client = null;
+    protected string | null $token = null;
 
     protected function tearDown(): void
     {
@@ -41,12 +45,12 @@ class JsonApiTestCase extends WebTestCase
             $url,
             [],
             [],
-            array_merge($defaultHeaders, $parsedHeaders),
-            json_encode($data)
+            \array_merge($defaultHeaders, $parsedHeaders),
+            \json_encode($data)
         );
 
         $response = $this->client->getResponse();
 
-        return json_decode($response->getContent(), true);
+        return \json_decode($response->getContent(), true);
     }
 }

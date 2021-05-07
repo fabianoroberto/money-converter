@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Dto\Request;
 
-class CatalogUpdateRequest extends CatalogCreateRequest
+use App\Dto\Traits\DescriptionPropertyTrait;
+use App\Dto\Traits\NamePropertyTrait;
+
+class CatalogUpdateRequest
 {
+    use DescriptionPropertyTrait;
+    use NamePropertyTrait;
 }

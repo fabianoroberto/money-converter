@@ -103,7 +103,7 @@ class ApiCatalogController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Get("/api/v1/catalogs/{id}", name="api_get_catalog")
+     * @Rest\Get("/api/v1/catalogs/{slug}", name="api_get_catalog")
      *
      * @OA\Parameter(
      *     in="query",
@@ -212,7 +212,7 @@ class ApiCatalogController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Put("/api/v1/catalogs/{id}", name="api_put_catalog")
+     * @Rest\Put("/api/v1/catalogs/{slug}", name="api_put_catalog")
      * @ParamConverter("catalogUpdateRequest", converter="fos_rest.request_body")
      *
      * @OA\RequestBody(
@@ -276,7 +276,7 @@ class ApiCatalogController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Delete("/api/v1/catalogs/{id}", name="api_delete_catalog")
+     * @Rest\Delete("/api/v1/catalogs/{slug}", name="api_delete_catalog")
      *
      * @OA\Parameter(
      *     in="query",

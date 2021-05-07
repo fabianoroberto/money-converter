@@ -45,6 +45,6 @@ class AppException extends \Exception
 
     protected function stripNamespaceFromClassName(string $className): string
     {
-        return substr($className, strrpos($className, '\\') - \strlen($className) + 1);
+        return \mb_substr($className, \mb_strrpos($className, '\\') - \mb_strlen($className) + 1);
     }
 }

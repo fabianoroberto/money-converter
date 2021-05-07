@@ -16,11 +16,6 @@ class MathService
         return $sum->__toString();
     }
 
-    /**
-     * @param GbpPrice $price1
-     * @param GbpPrice $price2
-     * @return string
-     */
     public function subGbpPrices(GbpPrice $price1, GbpPrice $price2): string
     {
         $sub = clone $price1;

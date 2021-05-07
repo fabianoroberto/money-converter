@@ -25,6 +25,10 @@ App\Entity\Article:
         code:
             expose: true
             groups: [ articles, article ]
+        price:
+            expose: true
+            type: string
+            groups: [ articles, article ]
         catalogs:
             expose: true
             groups: [ article.catalogs ]

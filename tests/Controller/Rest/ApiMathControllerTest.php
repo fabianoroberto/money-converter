@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Controller\Rest;
 
 use App\Tests\JsonApiTestCase;
@@ -7,6 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @covers \App\Controller\Rest\ApiMathController
+ *
+ * @internal
  */
 class ApiMathControllerTest extends JsonApiTestCase
 {

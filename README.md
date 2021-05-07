@@ -46,15 +46,20 @@ To run tests, run the following command
   GET /api/v1/articles
 ```
 
+| Parameter | Type      | Description                                          |
+| :-------- | :-------- | :--------------------------------------------------- |
+| `page`    | `integer` | **Required**. Page from which to start listing items |
+| `limit`   | `integer` | **Required**. How many items to return               |
+
 #### Get article
 
 ```http
-  GET /api/v1/articles/{id}
+  GET /api/v1/articles/{code}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `id`      | `string` | **Required**. Id of item to fetch |
+| Parameter | Type     | Description                         |
+| :-------- | :------- | :---------------------------------- |
+| `code`    | `string` | **Required**. Code of item to fetch |
 
 #### Create article
 
@@ -62,13 +67,168 @@ To run tests, run the following command
   POST /api/v1/articles
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `name`      | `string` | **Required**. Name of article |
-| `description`      | `string` | Description of article |
-| `pound_value`      | `int` | **Required if `shilling_value` and `pence_value` equal to 0**. Price in pound |
-| `shilling_value`      | `int` | **Required if `pound_value` and `pence_value` equal to 0**. Price in shilling |
-| `pence_value`      | `int` | **Required if `pound_value` and `shilling_value`  equal to 0**. Price in pence |
+| Parameter     | Type     | Description                                                                    |
+| :------------ | :------- | :----------------------------------------------------------------------------- |
+| `name`        | `string` | **Required**. Name of article                                                  |
+| `description` | `string` | Description of article                                                         |
+| `price`       | `string` | **Required**. Price representation in Xp Ys Zd format                          |
+| `photoUrl`    | `string` | Url of an article image (eg. https://picsum.photos/seed/picsum/200/300)        |
+| `catalogs`    | `array`  | Array of objects with format `{"slug": "string"}` where "slug" is catalog slug |
+
+#### Update article
+
+```http
+  PUT /api/v1/articles/{code}
+```
+
+| Parameter     | Type     | Description                                                             |
+| :------------ | :------- | :---------------------------------------------------------------------- |
+| `code`        | `string` | **Required**. Slug of item to update                                    |
+| `name`        | `string` | **Required**. Name of article                                           |
+| `description` | `string` | Description of article                                                  |
+| `price`       | `string` | **Required**. Price representation in Xp Ys Zd format                   |
+| `photoUrl`    | `string` | Url of an article image (eg. https://picsum.photos/seed/picsum/200/300) |
+
+#### Remove article
+
+```http
+  DELETE /api/v1/articles/{code}
+```
+
+| Parameter     | Type     | Description                          |
+| :------------ | :------- | :----------------------------------- |
+| `code`        | `string` | **Required**. Slug of item to delete |
+
+#### Add article to catalogs
+
+```http
+  PUT /api/v1/articles/{code}/catalogs
+```
+
+| Parameter     | Type     | Description                                                                    |
+| :------------ | :------- | :----------------------------------------------------------------------------- |
+| `code`        | `string` | **Required**. Slug of item to update                                           |
+| `catalogs`    | `array`  | Array of objects with format `{"slug": "string"}` where "slug" is catalog slug |
+
+#### Remove article from catalogs
+
+```http
+  DELETE /api/v1/articles/{code}/catalogs
+```
+
+| Parameter     | Type     | Description                                                                    |
+| :------------ | :------- | :----------------------------------------------------------------------------- |
+| `code`        | `string` | **Required**. Slug of item to update                                           |
+| `catalogs`    | `array`  | Array of objects with format `{"slug": "string"}` where "slug" is catalog slug |
+
+#### Set article image
+
+```http
+  POST /api/v1/articles/{code}/image
+```
+
+| Parameter     | Type     | Description                          |
+| :------------ | :------- | :----------------------------------- |
+| `code`        | `string` | **Required**. Slug of item to update |
+| `photo`       | `File`   | **Required**. Image to upload        |
+
+#### Get all catalogs
+
+```http
+  GET /api/v1/catalogs
+```
+
+| Parameter | Type      | Description                                          |
+| :-------- | :-------- | :--------------------------------------------------- |
+| `page`    | `integer` | **Required**. Page from which to start listing items |
+| `limit`   | `integer` | **Required**. How many items to return               |
+
+#### Get catalog
+
+```http
+  GET /api/v1/catalogs/{slug}
+```
+
+| Parameter | Type      | Description                         |
+| :-------- | :-------- | :---------------------------------- |
+| `slug`    | `string`  | **Required**. Slug of item to fetch |
+
+#### Create catalog
+
+```http
+  POST /api/v1/catalogs
+```
+
+| Parameter     | Type     | Description                   |
+| :------------ | :------- | :---------------------------- |
+| `name`        | `string` | **Required**. Name of catalog |
+| `description` | `string` | Description of catalog        |
+
+#### Update catalog
+
+```http
+  PUT /api/v1/catalogs/{slug}
+```
+
+| Parameter     | Type     | Description                          |
+| :------------ | :------- | :----------------------------------- |
+| `slug`        | `string` | **Required**. Slug of item to update |
+| `name`        | `string` | **Required**. Name of catalog        |
+| `description` | `string` | Description of catalog               |
+
+#### Delete catalog
+
+```http
+  DELETE /api/v1/catalogs/{slug}
+```
+
+| Parameter     | Type     | Description                          |
+| :------------ | :------- | :----------------------------------- |
+| `slug`        | `string` | **Required**. Slug of item to update |
+
+#### Sum prices
+
+```http
+  POST /api/v1/math/sum
+```
+
+| Parameter | Type     | Description                        |
+| :-------- | :------- | :--------------------------------- |
+| `addend1` | `string` | **Required**. First operand of sum |
+| `addend2` | `string` | **Required**. First operand of sum |
+
+#### Substract prices
+
+```http
+  POST /api/v1/math/sub
+```
+
+| Parameter    | Type     | Description                        |
+| :----------- | :------- | :--------------------------------- |
+| `minuend`    | `string` | **Required**. First operand of sub |
+| `subtrahend` | `string` | **Required**. First operand of sub |
+
+#### Multiply prices
+
+```http
+  POST /api/v1/math/mul
+```
+
+| Parameter | Type              | Description                        |
+| :-------- | :---------------- | :--------------------------------- |
+| `factor1` | `string`          | **Required**. First operand of mul |
+| `factor2` | `string` or `int` | **Required**. First operand of mul |
+
+#### Divide prices
+
+```http
+  POST /api/v1/math/div
+```
+
+| Parameter  | Type              | Description                        |
+| :--------- | :---------------- | :--------------------------------- |
+| `dividend` | `string`          | **Required**. First operand of div |
+| `divisor`  | `string` or `int` | **Required**. First operand of div |
 
 ## Authors
 

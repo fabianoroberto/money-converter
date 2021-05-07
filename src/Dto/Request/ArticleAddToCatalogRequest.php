@@ -6,7 +6,7 @@ namespace App\Dto\Request;
 
 use App\Dto\Traits\CatalogsPropertyTrait;
 
-final class ArticleCreateRequest extends ArticleUpdateRequest
+final class ArticleAddToCatalogRequest
 {
     use CatalogsPropertyTrait;
 }

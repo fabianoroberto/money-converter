@@ -5,7 +5,7 @@ App\Entity\Catalog:
           href:
               route: api_get_catalog
               parameters:
-                  id: expr(object.getUuid())
+                  slug: expr(object.getSlug())
                   _format: json
               absolute: false
           exclusion:
@@ -17,6 +17,12 @@ App\Entity\Catalog:
         description:
             expose: true
             groups: [ catalogs, catalog ]
+        slug:
+            expose: true
+            groups: [ catalogs, catalog ]
+        articles:
+            expose: true
+            groups: [ catalog.articles ]
     virtual_properties:
         getUuid:
             serialized_name: id

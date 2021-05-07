@@ -31,7 +31,7 @@ class Article implements SoftDeleteable, Timestampable
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class=UuidV4Generator::class)
      */
-    private ?Uuid $id;
+    private ?Uuid $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -56,7 +56,7 @@ class Article implements SoftDeleteable, Timestampable
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $photoFilename;
+    private ?string $photoFilename = null;
 
     /**
      * @ORM\ManyToMany(targetEntity=Catalog::class, mappedBy="articles")
@@ -81,9 +81,9 @@ class Article implements SoftDeleteable, Timestampable
         return $this->id;
     }
 
-    public function getUuid(): string
+    public function getUuid(): ?string
     {
-        return $this->id->__toString();
+        return $this->id?->__toString();
     }
 
     public function getName(): ?string

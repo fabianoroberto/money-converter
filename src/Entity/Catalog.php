@@ -42,6 +42,12 @@ class Catalog
     private ?string $description;
 
     /**
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(length=128, unique=true)
+     */
+    private string $slug;
+
+    /**
      * @ORM\ManyToMany(targetEntity=Article::class, inversedBy="catalogs")
      */
     private Collection $articles;
@@ -89,6 +95,11 @@ class Catalog
         $this->description = $description;
 
         return $this;
+    }
+
+    public function getSlug(): string
+    {
+        return $this->slug;
     }
 
     /**

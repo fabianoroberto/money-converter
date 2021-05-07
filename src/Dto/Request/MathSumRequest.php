@@ -45,12 +45,12 @@ final class MathSumRequest
 
     public function getPrice1(): GbpPrice
     {
-        $parts = explode(' ', $this->addend1);
+        $parts = \explode(' ', $this->addend1);
 
         $poundValue = 0;
         $shillingValue = 0;
 
-        match (count($parts)) {
+        match (\count($parts)) {
             1 => [$penceValue] = $parts,
             2 => [$shillingValue, $penceValue] = $parts,
             default => [$poundValue, $shillingValue, $penceValue] = $parts,
@@ -65,12 +65,12 @@ final class MathSumRequest
 
     public function getPrice2(): GbpPrice
     {
-        $parts = explode(' ', $this->addend2);
+        $parts = \explode(' ', $this->addend2);
 
         $poundValue = 0;
         $shillingValue = 0;
 
-        match (count($parts)) {
+        match (\count($parts)) {
             1 => [$penceValue] = $parts,
             2 => [$shillingValue, $penceValue] = $parts,
             default => [$poundValue, $shillingValue, $penceValue] = $parts,
