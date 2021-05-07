@@ -23,6 +23,9 @@ reset_db: ## drop db, create db, update schema and load fixtures
 update_schema: ## Update DB Schema
 	symfony console doctrine:migrations:migrate --no-interaction
 
+phpunit:
+	APP_ENV=test symfony php vendor/phpunit/phpunit/phpunit --configuration phpunit.xml.dist
+
 phpspec:
 	symfony php vendor/bin/phpspec run -vvv
 

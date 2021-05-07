@@ -33,6 +33,7 @@ Attenzione: gli endpoint devono poter ricevere e produrre i valori monetari come
 To run tests, run the following command
 
 ```bash
+  make phpunit
   make phpspec
 ```
 

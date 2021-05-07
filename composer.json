@@ -48,8 +48,12 @@
         "fakerphp/faker": "^1.14",
         "friendsofphp/php-cs-fixer": "^2.18",
         "phpspec/phpspec": "^7.0",
+        "phpunit/phpunit": "^9.5",
+        "symfony/browser-kit": "^5.2",
+        "symfony/css-selector": "^5.2",
         "symfony/debug-bundle": "^5.2",
         "symfony/maker-bundle": "^1.30",
+        "symfony/phpunit-bridge": "^5.2",
         "symfony/stopwatch": "^5.2",
         "symfony/var-dumper": "^5.2",
         "symfony/web-profiler-bundle": "^5.2"
@@ -103,6 +107,9 @@
         ],
         "schema-validate": [
             "symfony console doctrine:schema:validate --skip-sync -vvv --no-interaction"
+        ],
+        "phpunit": [
+            "APP_ENV=test symfony php vendor/phpunit/phpunit/phpunit --configuration phpunit.xml.dist"
         ]
     },
     "conflict": {
