@@ -197,7 +197,7 @@ To run tests, run the following command
 | `addend1` | `string` | **Required**. First operand of sum |
 | `addend2` | `string` | **Required**. First operand of sum |
 
-#### Substract prices
+#### Subtract prices
 
 ```http
   POST /api/v1/math/sub

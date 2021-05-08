@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Money Converter - Products{% endblock %}
+
+{% block body %}
+
+<div class="example-wrapper">
+    <h1>Products</h1>
+
+    <div
+            class="input-group"
+            {{ stimulus_controller('product', {
+                url: path('api_get_articles')
+            }) }}
+    >
+        <div
+                class="search-preview"
+                data-product-target="result"
+        ></div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Money Converter - Calculator{% endblock %}
+
+{% block body %}
+
+<div class="example-wrapper">
+    <h1>Calculator</h1>
+
+    <form
+            {{ stimulus_controller('math', {
+                sum: path('api_post_math_sum'),
+                sub: path('api_post_math_sub'),
+                mul: path('api_post_math_mul'),
+                div: path('api_post_math_div')
+            }) }}
+            data-action="math#onSubmit"
+    >
+        <div class="form-group">
+            <label for="operand1">Operand 1</label>
+            <input class="form-control"
+                   type="text"
+                   name="operand1"
+                   id="operand1"
+                   required="required"
+                   pattern="\d+p \d+s \d+d"
+                   title="Operand 1 (eg. 5p 17s 8d)"
+                   aria-describedby="operandHelp1"
+                   placeholder="5p 17s 8d">
+            <small id="operandHelp1" class="form-text text-muted">Use format Xp Ys Zd (eg. 5p 17s 8d).</small>
+        </div>
+        <div class="form-group">
+            <label for="operator">Operator</label>
+            <select class="form-control"
+                    name="operator"
+                    id="operator"
+                    required="required"
+                    aria-describedby="operatorHelp">
+                <option value="sum">+</option>
+                <option value="sub">-</option>
+                <option value="mul">x</option>
+                <option value="div">/</option>
+            </select>
+            <small id="operatorHelp" class="form-text text-muted">Allowed operation are sum (+), subtract (-), multiply (x) and divide (/).</small>
+        </div>
+        <div class="form-group">
+            <label for="operand2">Operand 2</label>
+            <input class="form-control"
+                   type="text"
+                   name="operand2"
+                   id="operand2"
+                   required="required"
+                   pattern="\d+p \d+s \d+d|\d+"
+                   title="Operand 2 (eg. 3p 4s 10d or 15)"
+                   aria-describedby="operandHelp2"
+                   placeholder="3p 4s 10d">
+            <small id="operandHelp2" class="form-text text-muted">Use format Xp Ys Zd or X (eg. 3p 4s 10d or 15).</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Go!</button>
+
+        <div class="mt-5"></div>
+        <h2>Result</h2>
+        <div>
+            Result of previous operation is:
+            <div class="spinner-border" role="status" style="display: none">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <span class="font-weight-bold" data-math-target="result"></span>
+        </div>
+    </form>
+</div>
+{% endblock %}
