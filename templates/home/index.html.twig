@@ -3,8 +3,439 @@
 {% block title %}Money Converter - Home{% endblock %}
 
 {% block body %}
-
-<div class="example-wrapper">
-    <h1>Home</h1>
-</div>
+    <h1 id="money-converter">Money converter</h1>
+    <p>Sample project that expose Products/Catalogs Rest APIs and perform math operations on old English Currencies</p>
+    <h2 id="requirements">Requirements</h2>
+    <p>&quot;<em>Fino al 1970 nel Regno Unito il sistema monetario prevedeva pence, shilling e pound. Un pound valeva 20 shilling e uno shilling 12 pence (quindi un pound 240 pence).</em>&quot;</p>
+    <p>Si chiede di realizzare un'API REST che permetta di:</p>
+    <ol style="list-style-type: decimal">
+        <li>Inserire, modificare e rimuovere articoli da un catalogo (un articolo ha un codice identificativo, un nome e un costo)</li>
+        <li>Ottenere la lista degli articoli del catalogo o di un singolo articolo (dato il suo codice identificativo)</li>
+        <li>Eseguire le principali operazioni aritmetiche:</li>
+        <li>somma - esempio =&gt; 5p 17s 8d + 3p 4s 10d= 9p 2s 6d</li>
+        <li>sottrazione - esempio =&gt; 5p 17s 8d - 3p 4s 10d= 2p 12s 10d</li>
+        <li>moltiplicazione con un intero (no decimali) - esempio =&gt; 5p 17s 8d 2 = 11p 15 s 4d</li>
+        <li>divisione resto (da indicare tra parentesi) con un intero (no decimali) - esempio =&gt; 18p 16s 1d/15 = 1p 5s Od (1s 1d)</li>
+    </ol>
+    <p>Attenzione: gli endpoint devono poter ricevere e produrre i valori monetari come stringa, usando lo stesso formato degli esempi ovvero &quot;Xp Ys Zd&quot;. Nel caso della divisione, se è presente un resto questo sarà indicato tra parentesi usando lo stesso formato &quot;Xp Ys Zd&quot; (vedi esempio 3.iv).</p>
+    <h2 id="tech-stack">Tech Stack</h2>
+    <p><strong>Client:</strong> Stimulus, Bootstrap</p>
+    <p><strong>Server:</strong> Symfony 5.2</p>
+    <h2 id="running-tests">Running Tests</h2>
+    <p>To run tests, run the following command</p>
+    <pre class="sourceCode bash"><code class="sourceCode bash">  <span class="kw">make</span> phpunit
+  <span class="kw">make</span> phpspec</code></pre>
+    <h2 id="api-reference">API Reference</h2>
+    <h4 id="get-all-articles">Get all articles</h4>
+    <pre class="http"><code>  GET /api/v1/articles</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>page</code></td>
+            <td align="left"><code>integer</code></td>
+            <td align="left"><strong>Required</strong>. Page from which to start listing items</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>limit</code></td>
+            <td align="left"><code>integer</code></td>
+            <td align="left"><strong>Required</strong>. How many items to return</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="get-article">Get article</h4>
+    <pre class="http"><code>  GET /api/v1/articles/{code}</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>code</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Code of item to fetch</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="create-article">Create article</h4>
+    <pre class="http"><code>  POST /api/v1/articles</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>name</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Name of article</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>description</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left">Description of article</td>
+        </tr>
+        <tr class="odd">
+            <td align="left"><code>price</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Price representation in Xp Ys Zd format</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>photoUrl</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left">Url of an article image (eg. https://picsum.photos/seed/picsum/200/300)</td>
+        </tr>
+        <tr class="odd">
+            <td align="left"><code>catalogs</code></td>
+            <td align="left"><code>array</code></td>
+            <td align="left">Array of objects with format <code>{&quot;slug&quot;: &quot;string&quot;}</code> where &quot;slug&quot; is catalog slug</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="update-article">Update article</h4>
+    <pre class="http"><code>  PUT /api/v1/articles/{code}</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>code</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Slug of item to update</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>name</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Name of article</td>
+        </tr>
+        <tr class="odd">
+            <td align="left"><code>description</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left">Description of article</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>price</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Price representation in Xp Ys Zd format</td>
+        </tr>
+        <tr class="odd">
+            <td align="left"><code>photoUrl</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left">Url of an article image (eg. https://picsum.photos/seed/picsum/200/300)</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="remove-article">Remove article</h4>
+    <pre class="http"><code>  DELETE /api/v1/articles/{code}</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>code</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Slug of item to delete</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="add-article-to-catalogs">Add article to catalogs</h4>
+    <pre class="http"><code>  PUT /api/v1/articles/{code}/catalogs</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>code</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Slug of item to update</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>catalogs</code></td>
+            <td align="left"><code>array</code></td>
+            <td align="left">Array of objects with format <code>{&quot;slug&quot;: &quot;string&quot;}</code> where &quot;slug&quot; is catalog slug</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="remove-article-from-catalogs">Remove article from catalogs</h4>
+    <pre class="http"><code>  DELETE /api/v1/articles/{code}/catalogs</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>code</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Slug of item to update</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>catalogs</code></td>
+            <td align="left"><code>array</code></td>
+            <td align="left">Array of objects with format <code>{&quot;slug&quot;: &quot;string&quot;}</code> where &quot;slug&quot; is catalog slug</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="set-article-image">Set article image</h4>
+    <pre class="http"><code>  POST /api/v1/articles/{code}/image</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>code</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Slug of item to update</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>photo</code></td>
+            <td align="left"><code>File</code></td>
+            <td align="left"><strong>Required</strong>. Image to upload</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="get-all-catalogs">Get all catalogs</h4>
+    <pre class="http"><code>  GET /api/v1/catalogs</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>page</code></td>
+            <td align="left"><code>integer</code></td>
+            <td align="left"><strong>Required</strong>. Page from which to start listing items</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>limit</code></td>
+            <td align="left"><code>integer</code></td>
+            <td align="left"><strong>Required</strong>. How many items to return</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="get-catalog">Get catalog</h4>
+    <pre class="http"><code>  GET /api/v1/catalogs/{slug}</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>slug</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Slug of item to fetch</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="create-catalog">Create catalog</h4>
+    <pre class="http"><code>  POST /api/v1/catalogs</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>name</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Name of catalog</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>description</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left">Description of catalog</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="update-catalog">Update catalog</h4>
+    <pre class="http"><code>  PUT /api/v1/catalogs/{slug}</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>slug</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Slug of item to update</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>name</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Name of catalog</td>
+        </tr>
+        <tr class="odd">
+            <td align="left"><code>description</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left">Description of catalog</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="delete-catalog">Delete catalog</h4>
+    <pre class="http"><code>  DELETE /api/v1/catalogs/{slug}</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>slug</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. Slug of item to update</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="sum-prices">Sum prices</h4>
+    <pre class="http"><code>  POST /api/v1/math/sum</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>addend1</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. First operand of sum</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>addend2</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. First operand of sum</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="subtract-prices">Subtract prices</h4>
+    <pre class="http"><code>  POST /api/v1/math/sub</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>minuend</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. First operand of sub</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>subtrahend</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. First operand of sub</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="multiply-prices">Multiply prices</h4>
+    <pre class="http"><code>  POST /api/v1/math/mul</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>factor1</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. First operand of mul</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>factor2</code></td>
+            <td align="left"><code>string</code> or <code>int</code></td>
+            <td align="left"><strong>Required</strong>. First operand of mul</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 id="divide-prices">Divide prices</h4>
+    <pre class="http"><code>  POST /api/v1/math/div</code></pre>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th align="left">Parameter</th>
+            <th align="left">Type</th>
+            <th align="left">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+            <td align="left"><code>dividend</code></td>
+            <td align="left"><code>string</code></td>
+            <td align="left"><strong>Required</strong>. First operand of div</td>
+        </tr>
+        <tr class="even">
+            <td align="left"><code>divisor</code></td>
+            <td align="left"><code>string</code> or <code>int</code></td>
+            <td align="left"><strong>Required</strong>. First operand of div</td>
+        </tr>
+        </tbody>
+    </table>
+    <h2 id="authors">Authors</h2>
+    <p>👤 <strong>Fabiano Roberto</strong></p>
+    <ul>
+        <li>Twitter: <a href="https://twitter.com/dr_thief" class="badge badge-primary" target="_blank">@dr_thief</a></li>
+        <li>Github: <a href="https://github.com/fabianoroberto" class="badge badge-primary" target="_blank">@fabianoroberto</a></li>
+    </ul>
 {% endblock %}
