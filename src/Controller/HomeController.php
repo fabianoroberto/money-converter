@@ -13,16 +13,18 @@ class HomeController extends AbstractController
     #[Route('/', name: 'index')]
     public function index(): Response
     {
-        return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
-        ]);
+        return $this->render('home/index.html.twig');
     }
 
     #[Route('/calculator', name: 'calculator')]
     public function calculator(): Response
     {
-        return $this->render('home/calculator.html.twig', [
-            'controller_name' => 'HomeController',
-        ]);
+        return $this->render('home/calculator.html.twig');
+    }
+
+    #[Route('/products', name: 'products')]
+    public function products(): Response
+    {
+        return $this->render('home/products.html.twig');
     }
 }

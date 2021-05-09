@@ -38,6 +38,14 @@
                             {% endif %}
                         </a>
                     </li>
+                    <li class="nav-item" {{ app.request.attributes.get('_route') == 'products' ? 'active' : '' }}>
+                        <a class="nav-link" href="{{ path('products') }}">
+                            Products
+                            {% if app.request.attributes.get('_route') == 'products' %}
+                                <span class="sr-only">(current)</span>
+                            {% endif %}
+                        </a>
+                    </li>
                 </ul>
             </div>
         </nav>
