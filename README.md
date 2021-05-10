@@ -28,6 +28,14 @@ Attenzione: gli endpoint devono poter ricevere e produrre i valori monetari come
 **Server:** Symfony 5.2
 
 
+## Install
+
+```bash
+bash dev/make/install.sh
+```
+
+Install script contain also loading "fake" data for Article and Catalog
+
 ## Running Tests
 
 To run tests, run the following command
@@ -37,6 +45,23 @@ To run tests, run the following command
   make phpspec
 ```
 
+## Build Backend
+
+```bash
+  make build_be
+```
+
+## Build Frontend
+
+```bash
+  make build_fe
+```
+
+## Build All
+
+```bash
+  make all
+```
 
 ## API Reference
 
@@ -229,6 +254,11 @@ To run tests, run the following command
 | :--------- | :---------------- | :--------------------------------- |
 | `dividend` | `string`          | **Required**. First operand of div |
 | `divisor`  | `string` or `int` | **Required**. First operand of div |
+
+## Usage
+
+After you create catalogs and articles, you can see results of yours API inserts into `/products` endpoint; 
+also you can use math calculator APIs through `/calculator` endpoint.
 
 ## Authors
 

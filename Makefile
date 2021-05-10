@@ -11,17 +11,21 @@ help: ## Show command list
 dump_env:
 	symfony composer dump-env ${APP_ENV}
 
-create_db: ## Create DB
-	symfony console doctrine:database:create
+install_dependencies:
+	symfony composer install
+	yarn install
 
-reset_db: ## drop db, create db, update schema and load fixtures
-	symfony console doctrine:database:drop --force
-	symfony console doctrine:database:create
+create_db: ## Create DB
+	symfony console doctrine:database:create --env=${APP_ENV}
+
+reset_db: ## Drop db, create db, update schema and load fixtures
+	symfony console doctrine:database:drop --force --env=${APP_ENV}
+	symfony console doctrine:database:create --env=${APP_ENV}
 	symfony console doctrine:migrations:migrate --no-interaction --env=${APP_ENV}
-	symfony console doctrine:fixtures:load --no-interaction
+	symfony console doctrine:fixtures:load --no-interaction --env=${APP_ENV}
 
 update_schema: ## Update DB Schema
-	symfony console doctrine:migrations:migrate --no-interaction
+	symfony console doctrine:migrations:migrate --no-interaction --env=${APP_ENV}
 
 phpunit:
 	APP_ENV=test symfony php vendor/phpunit/phpunit/phpunit --configuration phpunit.xml.dist
@@ -29,5 +33,18 @@ phpunit:
 phpspec:
 	symfony php vendor/bin/phpspec run -vvv
 
+build_be: ## Build Backend
+	symfony composer install
+	symfony console doctrine:migrations:migrate --no-interaction
+
+build_fe: ## Build Frontend
+	yarn install
+	yarn build
+
 refresh: ## Refresh cache
 	symfony console cache:clear
+
+install: ## Initial setup
+	bash dev/make/install.sh
+
+all: build_be build_fe #Build Backend and Frontend
